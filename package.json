@@ -1,0 +1,8 @@
+{
+  "name": "mws-restaurant-stage-1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/eneasmarques/mws-restaurant-stage-1.git",
+  "license": "MIT",
+  "dependencies": {}
+}
