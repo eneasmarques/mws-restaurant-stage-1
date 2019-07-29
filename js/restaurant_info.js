@@ -26,7 +26,7 @@ initMap = () => {
         "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}",
         {
           mapboxToken:
-            "<pk.eyJ1IjoiZW5lYXNtYXJxdWVzIiwiYSI6ImNqb3hjYm0wYTIzNzgzcG1qamR2bHM1cDAifQ.euL22KYyTJ2-akje14Jcwg>",
+            "pk.eyJ1IjoiZW5lYXNtYXJxdWVzIiwiYSI6ImNqb3hjYm0wYTIzNzgzcG1qamR2bHM1cDAifQ.euL22KYyTJ2-akje14Jcwg",
           maxZoom: 18,
           attribution:
             'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -92,10 +92,12 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   name.innerHTML = restaurant.name;
 
   const address = document.getElementById("restaurant-address");
+
   address.innerHTML = restaurant.address;
 
   const image = document.getElementById("restaurant-img");
   image.className = "restaurant-img";
+  image.alt = `${restaurant.name} Restaurant`;
   image.src = DBHelper.imageUrlForRestaurant(restaurant);
 
   const cuisine = document.getElementById("restaurant-cuisine");
@@ -116,6 +118,7 @@ fillRestaurantHoursHTML = (
   operatingHours = self.restaurant.operating_hours
 ) => {
   const hours = document.getElementById("restaurant-hours");
+  hours.setAttribute("aria-label", "Hours");
   for (let key in operatingHours) {
     const row = document.createElement("tr");
 
@@ -124,7 +127,7 @@ fillRestaurantHoursHTML = (
     row.appendChild(day);
 
     const time = document.createElement("td");
-    time.innerHTML = operatingHours[key];
+    time.innerHTML = operatingHours[key].replace(",", "<br>");
     row.appendChild(time);
 
     hours.appendChild(row);
@@ -158,23 +161,38 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  */
 createReviewHTML = review => {
   const li = document.createElement("li");
-  const name = document.createElement("p");
+  li.setAttribute("tabindex", "0");
+  const name = document.createElement("h3");
   name.innerHTML = review.name;
   li.appendChild(name);
+
+  li.appendChild(createRateStar(review.rating));
 
   const date = document.createElement("p");
   date.innerHTML = review.date;
   li.appendChild(date);
-
-  const rating = document.createElement("p");
-  rating.innerHTML = `Rating: ${review.rating}`;
-  li.appendChild(rating);
 
   const comments = document.createElement("p");
   comments.innerHTML = review.comments;
   li.appendChild(comments);
 
   return li;
+};
+
+createRateStar = rating => {
+  if (!rating) return;
+
+  let rate = document.createElement("span");
+  rate.className = "rate";
+  let star = document.createElement("i");
+
+  for (num = 1; num <= 5; num++) {
+    star = document.createElement("i");
+    star.className = rating >= num ? "fas fa-star" : "far fa-star";
+    rate.appendChild(star);
+  }
+
+  return rate;
 };
 
 /**
